@@ -36,7 +36,7 @@ public class EnemyController : MonoBehaviour
 
             if (Vector3.Distance(ennemy.transform.position, position1.transform.position) > 0.001f && leftPosition == false)
             {
-                ennemy.localScale = new Vector3(-1.5f, ennemy.localScale.y, ennemy.localScale.z);
+                ennemy.localScale = new Vector3(-2f, ennemy.localScale.y, ennemy.localScale.z);
                 ennemy.transform.position = Vector3.MoveTowards(ennemy.transform.position, position1.transform.position, enemySpeed);
                 if (Vector3.Distance(ennemy.transform.position, position1.transform.position) < 0.001f)
                 {
@@ -50,7 +50,7 @@ public class EnemyController : MonoBehaviour
 
             if (Vector3.Distance(ennemy.transform.position, position2.transform.position) > 0.001f && leftPosition == true)
             {
-                ennemy.localScale = new Vector3(1.5f, ennemy.localScale.y, ennemy.localScale.z);
+                ennemy.localScale = new Vector3(2f, ennemy.localScale.y, ennemy.localScale.z);
                 ennemy.transform.position = Vector3.MoveTowards(ennemy.transform.position, position2.transform.position, enemySpeed);
                 if (Vector3.Distance(ennemy.transform.position, position2.transform.position) < 0.001f)
                 {

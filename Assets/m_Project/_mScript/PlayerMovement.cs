@@ -9,13 +9,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform checkGround;
     [SerializeField] SpriteRenderer playerSprite;
     public Rigidbody2D rb;
+    public Transform respawnPos;
 
 
     public float speed = 250f;
     public float force = 2f;
     float sprint = 20f;
-    private float distanceRaycast = 0.1f;
+    private float distanceRaycast = 0.3f;
     public bool isHurt = false;
+    public int coinScore = 0;
 
 
     float moveInput;
@@ -78,6 +80,15 @@ public class PlayerMovement : MonoBehaviour
         {
             characterSprite.localScale = new Vector3(Mathf.Sign(moveInput) * Mathf.Abs(characterSprite.localScale.x), characterSprite.localScale.y, characterSprite.localScale.z);
         }
+        if (Physics2D.Raycast(checkGround.transform.position, Vector3.down, distanceRaycast, LayerMask.GetMask("Pente")))
+        {
+            rb.sharedMaterial.friction = 1f;
+        }
+        else
+        {
+            rb.sharedMaterial.friction = 0.6f;
+        }
+
 
 
 
@@ -117,7 +128,26 @@ public class PlayerMovement : MonoBehaviour
             }
 
         }
+
+        if (other.tag == "Coin")
+        {
+            GameManager.Instance.GetCoin();
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.tag == "DeathZone") //respawn au respawn pont + reset velocity
+        {
+            GameManager.Instance.MyMethod();
+            GameManager.Instance.Respawn(gameObject.transform);
+        }
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Hidden"))
+        {
+            other.gameObject.SetActive(false); //  ACCORRIGER)
+        }
+
     }
+
 
     void InvicibilityFrame(float alpha)
     {
