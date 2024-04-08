@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     // Start is called before the first frame update
     public Transform respawnPoint;
-    int coinScore = 0;
+    public int coinScore = 0;
     // Start is called before the first frame update
 
 

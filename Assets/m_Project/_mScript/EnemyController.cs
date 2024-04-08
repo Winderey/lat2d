@@ -18,6 +18,8 @@ public class EnemyController : MonoBehaviour
     private bool leftPosition = false;
     private bool rightPosition = true;
     private bool pause = false;
+    public int ennemyHP = 1;
+    public bool isDead = false;
 
     // Update is called once per frame
     void Update()
@@ -61,15 +63,18 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-   /* private void OnTriggerEnter2D(Collider2D other)
+    public void LoseHP()
     {
-        Debug.Log("entrer dans le trigger");
-        if (other.tag == "Player")
+        ennemyHP = ennemyHP - 1;
+        if (ennemyHP <= 0)
         {
-            Destroy(gameObject);
-            Debug.Log("entrer dans le trigger");
+            isDead = true;
         }
-    }*/
+        else
+        {
+            Debug.Log("a");
+        }
+    }
 
 
 

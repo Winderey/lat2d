@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public Transform respawnPos;
 
+
+    public EnemyController ennemy;
 
     public float speed = 250f;
     public float force = 2f;
@@ -117,7 +120,13 @@ public class PlayerMovement : MonoBehaviour
             if (transform.position.y > other.gameObject.transform.position.y + other.gameObject.GetComponent<BoxCollider2D>().bounds.size.y)
             {
                 rb.AddForce(new Vector3(0, 5f, 0), ForceMode2D.Impulse);
-                other.gameObject.SetActive(false);
+                //ennemy.LoseHP();
+                Debug.Log("souffre, chose");
+                if (ennemy.isDead == true)
+                {
+                    other.gameObject.SetActive(false);
+                }
+                
             }
             else
             {
@@ -143,9 +152,18 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Hidden"))
         {
-            other.gameObject.SetActive(false); //  ACCORRIGER)
+            other.gameObject.GetComponent<TilemapRenderer>().enabled = false; //  ACCORRIGER)
         }
 
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Hidden"))
+        {
+            other.gameObject.GetComponent<TilemapRenderer>().enabled = true; //  ACCORRIGER)
+            Debug.Log("SORS");
+        }
     }
 
 
