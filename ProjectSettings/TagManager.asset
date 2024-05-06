@@ -7,6 +7,8 @@ TagManager:
   - Bunny
   - Coin
   - DeathZone
+  - Ladder
+  - EndLadder
   layers:
   - Default
   - TransparentFX

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -21,6 +22,9 @@ public class PlayerMovement : MonoBehaviour
     private float distanceRaycast = 0.3f;
     public bool isHurt = false;
     public int coinScore = 0;
+    public float climbSpeed = 0f;
+    public bool canClimb = false;
+    public bool isClimbing = false;
 
 
     float moveInput;
@@ -39,23 +43,30 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        float horizontalInput = Input.GetAxis("Horizontal");
         if (canJump)
         {
             rb.AddForce(new Vector3(0, force, 0), ForceMode2D.Impulse);
             canJump = false;
         }
         rb.velocity = new Vector2(moveInput * Time.fixedDeltaTime * speed, rb.velocity.y);
+
+        if (Input.GetKey(KeyCode.UpArrow) && canClimb == true)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, climbSpeed * Time.fixedDeltaTime);
+            isClimbing = true;
+            Debug.Log("HUM MAIS MONTEs");
+        }
+        else if (Input.GetKey(KeyCode.DownArrow) && canClimb == true)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -climbSpeed * Time.fixedDeltaTime);
+            isClimbing = true;
+        }
+
+
     }
 
-    /*private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "obstacle")
-        {
-            Destroy(other.gameObject);
 
-        }
-    }*/
-    // Update is called once per frame
     void Update()
     {
         moveInput = Input.GetAxisRaw("Horizontal");
@@ -67,11 +78,14 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && (rb.velocity.y <= 0.1 && rb.velocity.y >= -0.1))
         {
             canJump = true;
-        }
+        } 
+
         animator.SetFloat("horizontalInput", moveInput);
         animator.SetFloat("verticalInput", rb.velocity.y);
         animator.SetBool("grounded", isGrounded);
         animator.SetBool("hurt", isHurt);
+        animator.SetBool("isClimbing", isClimbing);
+
         //transform.Translate(Vector3.forward * Time.deltaTime * speed);
 
 
@@ -111,6 +125,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("entrer dans le trigger");
@@ -138,6 +154,17 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
+        if (other.tag == "Ladder")
+        {
+            canClimb = true;
+        }
+
+        if (other.tag == "EndLadder")
+        {
+            rb.velocity = Vector2.zero;
+            canClimb = false;
+        }
+
         if (other.tag == "Coin")
         {
             GameManager.Instance.GetCoin();
@@ -152,8 +179,9 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Hidden"))
         {
-            other.gameObject.GetComponent<TilemapRenderer>().enabled = false; //  ACCORRIGER)
+            other.gameObject.GetComponent<TilemapRenderer>().enabled = false;
         }
+
 
     }
 
@@ -161,8 +189,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Hidden"))
         {
-            other.gameObject.GetComponent<TilemapRenderer>().enabled = true; //  ACCORRIGER)
+            other.gameObject.GetComponent<TilemapRenderer>().enabled = true;
             Debug.Log("SORS");
+        }
+        if (other.tag == "Ladder")
+        {
+            canClimb = false;
+            isClimbing = false;
         }
     }
 
