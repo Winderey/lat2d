@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     public float climbSpeed = 0f;
     public bool canClimb = false;
     public bool isClimbing = false;
+    public bool isCrounching = false;
 
 
     float moveInput;
@@ -54,15 +55,34 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow) && canClimb == true)
         {
             rb.velocity = new Vector2(rb.velocity.x, climbSpeed * Time.fixedDeltaTime);
-            isClimbing = true;
-            Debug.Log("HUM MAIS MONTEs");
-        }
-        else if (Input.GetKey(KeyCode.DownArrow) && canClimb == true)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, -climbSpeed * Time.fixedDeltaTime);
+            rb.constraints = (RigidbodyConstraints2D)RigidbodyConstraints.FreezePositionY;
             isClimbing = true;
         }
 
+        if (Input.GetKey(KeyCode.DownArrow) && canClimb == true)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -climbSpeed * Time.fixedDeltaTime);
+            rb.constraints = (RigidbodyConstraints2D)RigidbodyConstraints.FreezePositionY;
+            isClimbing = true;
+        }
+
+        if (((Input.GetKey(KeyCode.LeftArrow) || (Input.GetKey(KeyCode.RightArrow))  && ((!Input.GetKey(KeyCode.UpArrow))) && (!Input.GetKey(KeyCode.DownArrow)))) && isClimbing == true)
+        {
+            
+            isClimbing = true;
+            rb.constraints = (RigidbodyConstraints2D)RigidbodyConstraints.FreezePositionY;
+            animator.speed = 1f;
+        }
+        if (!Input.anyKey && isClimbing == true)
+        {
+            animator.speed = 0f;
+            rb.constraints = (RigidbodyConstraints2D)RigidbodyConstraints.FreezePosition;
+        }
+
+        else {
+            animator.speed = 1f;
+            rb.constraints = (RigidbodyConstraints2D)RigidbodyConstraints.FreezePositionY;
+        }
 
     }
 
@@ -84,7 +104,8 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("verticalInput", rb.velocity.y);
         animator.SetBool("grounded", isGrounded);
         animator.SetBool("hurt", isHurt);
-        animator.SetBool("isClimbing", isClimbing);
+        animator.SetBool("climbing", isClimbing);
+        animator.SetBool("crounching", isCrounching);
 
         //transform.Translate(Vector3.forward * Time.deltaTime * speed);
 
@@ -106,7 +127,15 @@ public class PlayerMovement : MonoBehaviour
             rb.sharedMaterial.friction = 0.6f;
         }
 
+        if (Input.GetKeyDown(KeyCode.DownArrow) && isGrounded == true)
+        {
+            isCrounching = true;
+        }
 
+        if (Input.GetKeyUp(KeyCode.DownArrow) && isGrounded == true)
+        {
+            isCrounching = false;
+        }
 
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
